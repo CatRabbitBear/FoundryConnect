@@ -4,24 +4,46 @@ import android.util.Log
 import com.booji.foundryconnect.data.network.FoundryApiService
 import com.booji.foundryconnect.data.network.FoundryRequest
 import com.booji.foundryconnect.data.network.Message
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 
 /**
- * Repository for handling chat logic and Azure Foundry API communications.
+ * Gateway between UI and Azure Foundry API.
+ *
+ * Decision notes:
+ *  - We wrap our Retrofit call in a try/catch to handle network or parsing exceptions.
+ *  - For HTTP success (2xx):
+ *      • We pull out the first choice’s content.
+ *      • If no choices are returned, we use a clear, named fallback (NO_RESPONSE_FALLBACK).
+ *  - For HTTP errors (non-2xx):
+ *      • We build a human-readable string: "Error <code>: <errorBody>".
+ *      • This makes it easy to diagnose server issues in tests or logs.
  */
-class ChatRepository(private val apiService: FoundryApiService) {
-    /**
-     * Sends a chat prompt to Azure Foundry and returns the assistant's reply.
-     * Errors are logged and surfaced as a simple error message string.
-     */
-    suspend fun sendMessage(prompt: String): String {
-        val request = FoundryRequest(messages = listOf(Message(role = "user", content = prompt)))
-
-        return try {
-            val response = apiService.sendMessage(request)
-            response.choices.firstOrNull()?.message?.content.orEmpty()
+class ChatRepository(
+    private val api: FoundryApiService
+) {
+    suspend fun sendMessage(prompt: String): String = withContext(Dispatchers.IO) {
+        return@withContext try {
+            val response = api.sendMessage(FoundryRequest(listOf(Message("user", prompt))))
+            if (response.isSuccessful) {
+                val body = response.body()
+                val first = body?.choices?.firstOrNull()?.message?.content
+                first ?: NO_RESPONSE_FALLBACK
+            } else {
+                // pull the status code and raw error body
+                val code = response.code()
+                val errorText = response.errorBody()?.string().orEmpty()
+                "Error $code: $errorText"
+            }
         } catch (e: Exception) {
-            Log.e("ChatRepository", "Error sending message", e)
+            // network failures, JSON parse errors, etc
             "Error: ${e.message}"
         }
+    }
+
+    private companion object {
+        // Clear, constant message when API returns 200 but no choices
+        const val NO_RESPONSE_FALLBACK = "No response from Foundry"
     }
 }

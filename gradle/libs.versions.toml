@@ -11,6 +11,8 @@ lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 composeBom = "2024.09.00"
 loggingInterceptor = "5.0.0-alpha.16"
+mockwebserverVersion = "5.0.0-alpha.14"
+okhttpTestingSupport = "5.0.0-alpha.14"
 retrofit = "3.0.0"
 kotlinxCoroutinesTest = "1.10.2"
 mockWebServer = "5.0.0-alpha.16"
@@ -33,6 +35,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
+mockwebserver-v500alpha14 = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserverVersion" }
+okhttp-testing-support = { module = "com.squareup.okhttp3:okhttp-testing-support", version.ref = "okhttpTestingSupport" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockWebServer" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }

@@ -7,11 +7,16 @@ import retrofit2.http.POST
 interface FoundryApiService {
 
     /**
-     * Sends the user's prompt to the chat completions endpoint and returns the
-     * parsed response.
+     * Retrofit interface for Azure Foundry chat completions.
+     *
+     * We return a Retrofit \[Response\]<FoundryResponse> rather than
+     * just FoundryResponse so that the repository can:
+     *  1. Inspect HTTP status codes directly.
+     *  2. Read raw error bodies on non-2xx responses.
+     *  3. Differentiate network/server errors from JSON parsing issues.
      */
     @POST("chat/completions")
     suspend fun sendMessage(
         @Body request: FoundryRequest
-    ): FoundryResponse
+    ): retrofit2.Response<FoundryResponse>
 }
