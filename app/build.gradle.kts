@@ -1,3 +1,22 @@
+// 1) Load .env into a Map<String, String>
+val envFile = rootProject.file("app/assets/env")
+val envMap: Map<String, String> = if (envFile.exists()) {
+    envFile
+        .readLines()                                   // List<String>
+        .mapNotNull { line ->
+            val trimmed = line.trim()
+            if (trimmed.isEmpty() || trimmed.startsWith("#") || !trimmed.contains("=")) {
+                null
+            } else {
+                val (key, value) = trimmed.split("=", limit = 2)
+                key.trim() to value.trim().trim('"', '\'')
+            }
+        }
+        .toMap()
+} else {
+    emptyMap()
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,10 +24,12 @@ plugins {
 }
 
 android {
+
     namespace = "com.booji.foundryconnect"
     compileSdk = 36
 
     defaultConfig {
+
         applicationId = "com.booji.foundryconnect"
         minSdk = 26
         targetSdk = 36
@@ -17,14 +38,21 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Expose Azure connection info to BuildConfig for runtime use
-        val azureProject = System.getenv("AZURE_PROJECT") ?: "YOUR_PROJECT"
-        val azureModel = System.getenv("AZURE_MODEL") ?: "YOUR_MODEL"
-        val azureApiKey = System.getenv("AZURE_API_KEY") ?: ""
-
-        buildConfigField("String", "AZURE_PROJECT", "\"$azureProject\"")
-        buildConfigField("String", "AZURE_MODEL", "\"$azureModel\"")
-        buildConfigField("String", "AZURE_API_KEY", "\"$azureApiKey\"")
+        buildConfigField(
+            "String",
+            "AZURE_PROJECT",
+            "\"${envMap["AZURE_PROJECT"] ?: "YOUR_PROJECT"}\""
+        )
+        buildConfigField(
+            "String",
+            "AZURE_MODEL",
+            "\"${envMap["AZURE_MODEL"] ?: "YOUR_MODEL"}\""
+        )
+        buildConfigField(
+            "String",
+            "AZURE_API_KEY",
+            "\"${envMap["AZURE_API_KEY"] ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -54,6 +82,9 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.dotenv.kotlin)
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
