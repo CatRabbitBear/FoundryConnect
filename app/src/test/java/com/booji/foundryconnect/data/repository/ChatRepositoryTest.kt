@@ -5,6 +5,7 @@ import com.booji.foundryconnect.data.network.FoundryResponse
 import com.booji.foundryconnect.data.network.Message
 import com.booji.foundryconnect.data.network.Choice
 import com.booji.foundryconnect.data.network.FoundryApiService
+import okhttp3.mockwebserver.SocketPolicy
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -101,5 +102,32 @@ class ChatRepositoryTest {
         // Then
         assertTrue(reply.contains("500"))
         assertTrue(reply.contains("Internal error"))
+    }
+
+    @Test
+    fun sendMessage_emptyChoices_returnsFallback() = runBlocking {
+        // Given: API returns 200 but with no choices
+        val json = "{ \"choices\": [] }"
+        server.enqueue(MockResponse().setResponseCode(200).setBody(json))
+
+        // When
+        val reply = repo.sendMessage("No answer")
+
+        // Then
+        assertEquals("No response from Foundry", reply)
+    }
+
+    @Test
+    fun sendMessage_networkException_returnsErrorMessage() = runBlocking {
+        // Given: Socket disconnect to trigger an IOException
+        server.enqueue(
+            MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
+        )
+
+        // When
+        val reply = repo.sendMessage("Fail")
+
+        // Then
+        assertTrue(reply.startsWith("Error"))
     }
 }

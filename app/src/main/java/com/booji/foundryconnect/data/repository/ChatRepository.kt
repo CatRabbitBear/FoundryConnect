@@ -4,6 +4,7 @@ import android.util.Log
 import com.booji.foundryconnect.data.network.FoundryApiService
 import com.booji.foundryconnect.data.network.FoundryRequest
 import com.booji.foundryconnect.data.network.Message
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -28,6 +29,8 @@ class ChatRepository(
             val response = api.sendMessage(FoundryRequest(listOf(Message("user", prompt))))
             if (response.isSuccessful) {
                 val body = response.body()
+                // Log raw JSON for debugging while hooking up the API
+                Log.d("ChatRepository", "Response JSON: ${Gson().toJson(body)}")
                 val first = body?.choices?.firstOrNull()?.message?.content
                 first ?: NO_RESPONSE_FALLBACK
             } else {

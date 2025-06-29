@@ -16,6 +16,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Expose Azure connection info to BuildConfig for runtime use
+        val azureProject = System.getenv("AZURE_PROJECT") ?: "YOUR_PROJECT"
+        val azureModel = System.getenv("AZURE_MODEL") ?: "YOUR_MODEL"
+        val azureApiKey = System.getenv("AZURE_API_KEY") ?: ""
+
+        buildConfigField("String", "AZURE_PROJECT", "\"$azureProject\"")
+        buildConfigField("String", "AZURE_MODEL", "\"$azureModel\"")
+        buildConfigField("String", "AZURE_API_KEY", "\"$azureApiKey\"")
     }
 
     buildTypes {
@@ -36,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     testOptions {

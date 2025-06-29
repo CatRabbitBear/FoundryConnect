@@ -15,7 +15,8 @@ interface FoundryApiService {
      *  2. Read raw error bodies on non-2xx responses.
      *  3. Differentiate network/server errors from JSON parsing issues.
      */
-    @POST("chat/completions")
+    // Azure Foundry requires the api-version query parameter on each call
+    @POST("chat/completions?api-version=2025-01-01-preview")
     suspend fun sendMessage(
         @Body request: FoundryRequest
     ): retrofit2.Response<FoundryResponse>
