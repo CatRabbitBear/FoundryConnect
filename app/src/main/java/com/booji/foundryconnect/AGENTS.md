@@ -15,6 +15,21 @@
   * Use `Response<FoundryResponse>` return type to inspect both success and error HTTP codes.
   * Sends a POST request with `FoundryRequest(messages: List<Message>)` and parses JSON into `FoundryResponse`.
 
+**Sample Request (bash):**
+Where the environment variables include AZURE_PROJECT, AZURE_MODEL, AZURE_API_KEY
+```bash
+curl -X POST "https://{$AZURE_POJECT}.cognitiveservices.azure.com/openai/deployments/{$AZURE_MODEL}/chat/completions?api-version=2025-01-01-preview" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $AZURE_API_KEY" \
+  -d '{
+      "messages": [{"role":"user","content":"Hello!"}],
+      "max_tokens":4096,
+      "temperature":1,
+      "top_p":1,
+      "model":"{$AZURE_MODEL}"
+    }'
+```
+
 ### Repository Layer (`ChatRepository`)
 
 * Handle messaging logic with Coroutines (`Dispatchers.IO`).
