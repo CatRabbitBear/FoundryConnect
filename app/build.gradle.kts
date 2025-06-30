@@ -84,7 +84,6 @@ android {
 dependencies {
 
     implementation(libs.dotenv.kotlin)
-    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
