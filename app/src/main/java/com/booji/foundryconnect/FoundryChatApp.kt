@@ -2,9 +2,11 @@ package com.booji.foundryconnect
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import com.booji.foundryconnect.data.history.ChatHistoryStore
 import com.booji.foundryconnect.data.prefs.SettingsDataStore
 import com.booji.foundryconnect.ui.ChatViewModel
 import com.booji.foundryconnect.ui.createRepository
+import com.booji.foundryconnect.ui.screens.ChatListScreen
 import com.booji.foundryconnect.ui.screens.ChatScreen
 import com.booji.foundryconnect.ui.screens.SettingsScreen
 
@@ -15,6 +17,7 @@ import com.booji.foundryconnect.ui.screens.SettingsScreen
 fun FoundryChatApp() {
     val context = LocalContext.current
     val store = remember { SettingsDataStore(context) }
+    val chatStore = remember { ChatHistoryStore(context) }
 
     // Observe stored values with BuildConfig fallbacks
     val project by store.projectId.collectAsState(initial = BuildConfig.AZURE_PROJECT)
@@ -29,14 +32,31 @@ fun FoundryChatApp() {
             key.ifBlank { BuildConfig.AZURE_API_KEY }
         )
     }
-    val viewModel = remember(repository) { ChatViewModel(repository) }
+    val viewModel = remember(repository, chatStore) { ChatViewModel(repository, chatStore) }
 
-    var screen by remember { mutableStateOf<Screen>(Screen.Chat) }
+    val chats by chatStore.chats.collectAsState(initial = emptyList())
+    var screen by remember { mutableStateOf<Screen?>(null) }
+    if (screen == null) {
+        screen = if (chats.isEmpty()) Screen.Chat else Screen.List
+    }
 
-    when (screen) {
+    val current = screen
+    when (current) {
         Screen.Chat -> ChatScreen(viewModel, onOpenSettings = { screen = Screen.Settings })
         Screen.Settings -> SettingsScreen(store) { screen = Screen.Chat }
+        Screen.List -> ChatListScreen(
+            store = chatStore,
+            onStartNew = {
+                viewModel.startNewChat()
+                screen = Screen.Chat
+            },
+            onOpenChat = {
+                viewModel.loadChat(it)
+                screen = Screen.Chat
+            }
+        )
+        null -> {}
     }
 }
 
-private enum class Screen { Chat, Settings }
+private enum class Screen { Chat, Settings, List }
