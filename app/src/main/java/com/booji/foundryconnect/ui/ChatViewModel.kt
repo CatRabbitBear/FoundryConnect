@@ -47,12 +47,14 @@ class ChatViewModel(
     fun sendMessage(prompt: String) {
         if (prompt.isBlank()) return
 
-        messages += Message(role = "user", content = prompt)
+        val userMessage = Message(role = "user", content = prompt)
+        val conversation = messages + userMessage
+        messages += userMessage
         inputText = ""
 
         viewModelScope.launch {
             isLoading = true
-            val reply = repository.sendMessage(prompt)
+            val reply = repository.sendMessage(conversation)
             isLoading = false
 
             if (reply.startsWith("Error")) {
