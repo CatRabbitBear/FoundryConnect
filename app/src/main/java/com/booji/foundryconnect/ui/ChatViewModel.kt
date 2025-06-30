@@ -67,32 +67,42 @@ class ChatViewModel(
     }
 
     companion object {
-        /** Builds a default [ChatRepository] using Retrofit and OkHttp. */
-        private fun defaultRepository(): ChatRepository {
-            val logging = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-            val client = OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .addInterceptor { chain ->
-                    val request = chain.request().newBuilder()
-                        .addHeader("Authorization", "Bearer ${BuildConfig.AZURE_API_KEY}")
-                        .build()
-                    chain.proceed(request)
-                }
-                .build()
-
-            val base = "https://${BuildConfig.AZURE_PROJECT}.cognitiveservices.azure.com/" +
-                    "openai/deployments/${BuildConfig.AZURE_MODEL}/"
-
-            val retrofit = Retrofit.Builder()
-                .baseUrl(base)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val service = retrofit.create(FoundryApiService::class.java)
-            return ChatRepository(service)
-        }
+        /** Builds a default [ChatRepository] from [BuildConfig] values. */
+        fun defaultRepository(): ChatRepository = createRepository(
+            BuildConfig.AZURE_PROJECT,
+            BuildConfig.AZURE_MODEL,
+            BuildConfig.AZURE_API_KEY
+        )
     }
 }
+
+/**
+ * Helper to construct a [ChatRepository] from runtime settings.
+ */
+fun createRepository(project: String, model: String, apiKey: String): ChatRepository {
+    val logging = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+    val client = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $apiKey")
+                .build()
+            chain.proceed(request)
+        }
+        .build()
+
+    val base = "https://${project}.cognitiveservices.azure.com/" +
+            "openai/deployments/${model}/"
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl(base)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val service = retrofit.create(FoundryApiService::class.java)
+    return ChatRepository(service)
+}
+

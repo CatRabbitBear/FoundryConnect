@@ -17,6 +17,7 @@ okhttpTestingSupport = "5.0.0-alpha.14"
 retrofit = "3.0.0"
 kotlinxCoroutinesTest = "1.10.2"
 mockWebServer = "5.0.0-alpha.16"
+datastore = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,7 @@ mockwebserver-v500alpha14 = { module = "com.squareup.okhttp3:mockwebserver", ver
 okhttp-testing-support = { module = "com.squareup.okhttp3:okhttp-testing-support", version.ref = "okhttpTestingSupport" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockWebServer" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 
 [plugins]

@@ -22,7 +22,10 @@ import com.booji.foundryconnect.ui.components.MessageBubble
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = remember { ChatViewModel() }) {
+fun ChatScreen(
+    viewModel: ChatViewModel = remember { ChatViewModel() },
+    onOpenSettings: () -> Unit = {}
+) {
     val error = viewModel.errorMessage
     val loading = viewModel.isLoading
 
@@ -36,7 +39,12 @@ fun ChatScreen(viewModel: ChatViewModel = remember { ChatViewModel() }) {
     }
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Foundry Chat") })
+            TopAppBar(
+                title = { Text("Foundry Chat") },
+                actions = {
+                    TextButton(onClick = onOpenSettings) { Text("Settings") }
+                }
+            )
         },
         bottomBar = {
             MessageInput(
