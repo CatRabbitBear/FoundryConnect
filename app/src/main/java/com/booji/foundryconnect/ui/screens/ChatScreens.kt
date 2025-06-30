@@ -3,8 +3,10 @@ package com.booji.foundryconnect.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +27,13 @@ fun ChatScreen(viewModel: ChatViewModel = remember { ChatViewModel() }) {
     val loading = viewModel.isLoading
 
     val messages = viewModel.messages
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            listState.animateScrollToItem(messages.lastIndex)
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Foundry Chat") })
@@ -41,6 +50,7 @@ fun ChatScreen(viewModel: ChatViewModel = remember { ChatViewModel() }) {
         Box(modifier = Modifier.padding(inner).fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize().padding(8.dp),
+                state = listState,
                 reverseLayout = false
             ) {
                 items(messages) { msg ->
