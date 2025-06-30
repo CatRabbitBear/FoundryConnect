@@ -10,11 +10,14 @@ import com.booji.foundryconnect.BuildConfig
 import com.booji.foundryconnect.data.network.FoundryApiService
 import com.booji.foundryconnect.data.network.Message
 import com.booji.foundryconnect.data.repository.ChatRepository
+import com.booji.foundryconnect.data.history.ChatHistoryStore
+import com.booji.foundryconnect.data.history.ChatRecord
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.UUID
 
 /**
  * Simple ViewModel holding chat state for the UI layer.
@@ -24,8 +27,12 @@ import retrofit2.converter.gson.GsonConverterFactory
  * in a future sprint.
  */
 class ChatViewModel(
-    private val repository: ChatRepository = defaultRepository()
+    private val repository: ChatRepository = defaultRepository(),
+    private val historyStore: ChatHistoryStore? = null
 ) : ViewModel() {
+
+    /** Unique id for the active chat conversation. */
+    private var currentChatId: String = UUID.randomUUID().toString()
 
     /** List of chat messages shown in the UI. */
     val messages = mutableStateListOf<Message>()
@@ -38,6 +45,26 @@ class ChatViewModel(
 
     /** Holds the latest error message, if any. */
     var errorMessage by mutableStateOf<String?>(null)
+
+    /** Begin a completely new chat session. */
+    fun startNewChat() {
+        currentChatId = UUID.randomUUID().toString()
+        messages.clear()
+        inputText = ""
+        errorMessage = null
+        viewModelScope.launch {
+            historyStore?.saveChat(ChatRecord(currentChatId, emptyList()))
+        }
+    }
+
+    /** Load an existing chat into the UI. */
+    fun loadChat(record: ChatRecord) {
+        currentChatId = record.id
+        messages.clear()
+        messages += record.messages
+        inputText = ""
+        errorMessage = null
+    }
 
     /**
      * Sends a user message to the repository and updates UI state based on the
@@ -63,6 +90,8 @@ class ChatViewModel(
                 messages += Message(role = "assistant", content = reply)
                 errorMessage = null
             }
+
+            historyStore?.saveChat(ChatRecord(currentChatId, messages.toList()))
         }
     }
 
