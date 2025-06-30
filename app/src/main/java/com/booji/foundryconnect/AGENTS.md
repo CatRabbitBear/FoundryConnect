@@ -6,6 +6,8 @@
 * Clearly demonstrate integration with Azure Foundry's REST API.
 * Provide clean separation between UI (Jetpack Compose), business logic (ChatRepository), and data/network layers (FoundryApiService).
 
+* MANY OF THESE GOALS HAVE BEEN REALISED - WE ARE NOW GRADUALLY INCREASING QUALITY AND FUNCTIONALITY  *~~~~
+
 ## Expected Components and Behaviors:
 
 ### API Layer
