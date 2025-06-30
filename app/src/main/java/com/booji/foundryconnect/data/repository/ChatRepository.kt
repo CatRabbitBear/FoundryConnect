@@ -24,9 +24,9 @@ import kotlinx.coroutines.withContext
 class ChatRepository(
     private val api: FoundryApiService
 ) {
-    suspend fun sendMessage(messages: List<Message>): String = withContext(Dispatchers.IO) {
+    suspend fun sendMessage(messages: List<Message>, maxTokens: Int): String = withContext(Dispatchers.IO) {
         return@withContext try {
-            val response = api.sendMessage(FoundryRequest(messages))
+            val response = api.sendMessage(FoundryRequest(messages, maxTokens))
             if (response.isSuccessful) {
                 val body = response.body()
                 // Log raw JSON for debugging while hooking up the API

@@ -32,7 +32,7 @@ fun FoundryChatApp() {
             key.ifBlank { BuildConfig.AZURE_API_KEY }
         )
     }
-    val viewModel = remember(repository, chatStore) { ChatViewModel(repository, chatStore) }
+    val viewModel = remember(repository, chatStore, store) { ChatViewModel(repository, chatStore, store) }
 
     val chats by chatStore.chats.collectAsState(initial = emptyList())
     var screen by remember { mutableStateOf<Screen?>(null) }

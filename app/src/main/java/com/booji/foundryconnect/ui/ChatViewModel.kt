@@ -12,6 +12,9 @@ import com.booji.foundryconnect.data.network.Message
 import com.booji.foundryconnect.data.repository.ChatRepository
 import com.booji.foundryconnect.data.history.ChatHistoryStore
 import com.booji.foundryconnect.data.history.ChatRecord
+import com.booji.foundryconnect.data.history.HistoryReducer
+import com.booji.foundryconnect.data.prefs.SettingsDataStore
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -28,7 +31,8 @@ import java.util.UUID
  */
 class ChatViewModel(
     private val repository: ChatRepository = defaultRepository(),
-    private val historyStore: ChatHistoryStore? = null
+    private val historyStore: ChatHistoryStore? = null,
+    private val settingsStore: SettingsDataStore? = null
 ) : ViewModel() {
 
     /** Unique id for the active chat conversation. */
@@ -81,7 +85,11 @@ class ChatViewModel(
 
         viewModelScope.launch {
             isLoading = true
-            val reply = repository.sendMessage(conversation)
+            val tokens = settingsStore?.maxTokens?.first() ?: 256
+            val limit = settingsStore?.historyWords?.first() ?: 1000
+            val system = settingsStore?.systemMessage?.first() ?: ""
+            val context = HistoryReducer.buildContext(conversation, system, limit)
+            val reply = repository.sendMessage(context, tokens)
             isLoading = false
 
             if (reply.startsWith("Error")) {
