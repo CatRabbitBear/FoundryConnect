@@ -59,7 +59,7 @@ class ChatRepositoryTest {
         server.enqueue(MockResponse().setBody(json).setResponseCode(200))
 
         // When
-        val reply = repo.sendMessage(listOf(Message("user", "Hi there")))
+        val reply = repo.sendMessage(listOf(Message("user", "Hi there")), 256)
 
         // Then
         assertEquals("Hello, Ant!", reply)
@@ -85,7 +85,7 @@ class ChatRepositoryTest {
         server.enqueue(MockResponse().setBody(json).setResponseCode(200))
 
         // When
-        val reply = repo.sendMessage(listOf(Message("user", "Give me two")))
+        val reply = repo.sendMessage(listOf(Message("user", "Give me two")), 256)
 
         // Then
         assertEquals("First reply", reply)
@@ -97,7 +97,7 @@ class ChatRepositoryTest {
         server.enqueue(MockResponse().setResponseCode(500).setBody("Internal error"))
 
         // When
-        val reply = repo.sendMessage(listOf(Message("user", "Kaboom")))
+        val reply = repo.sendMessage(listOf(Message("user", "Kaboom")), 256)
 
         // Then
         assertTrue(reply.contains("500"))
@@ -111,7 +111,7 @@ class ChatRepositoryTest {
         server.enqueue(MockResponse().setResponseCode(200).setBody(json))
 
         // When
-        val reply = repo.sendMessage(listOf(Message("user", "No answer")))
+        val reply = repo.sendMessage(listOf(Message("user", "No answer")), 256)
 
         // Then
         assertEquals("No response from Foundry", reply)
@@ -125,7 +125,7 @@ class ChatRepositoryTest {
         )
 
         // When
-        val reply = repo.sendMessage(listOf(Message("user", "Fail")))
+        val reply = repo.sendMessage(listOf(Message("user", "Fail")), 256)
 
         // Then
         assertTrue(reply.startsWith("Error"))

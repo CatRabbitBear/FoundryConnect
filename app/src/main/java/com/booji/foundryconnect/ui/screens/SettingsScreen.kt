@@ -17,10 +17,16 @@ fun SettingsScreen(store: SettingsDataStore, onBack: () -> Unit) {
     val currentProject by store.projectId.collectAsState(initial = "")
     val currentModel by store.modelName.collectAsState(initial = "")
     val currentKey by store.apiKey.collectAsState(initial = "")
+    val currentTokens by store.maxTokens.collectAsState(initial = 256)
+    val currentHistory by store.historyWords.collectAsState(initial = 1000)
+    val currentSystem by store.systemMessage.collectAsState(initial = "")
 
     var project by remember { mutableStateOf(currentProject) }
     var model by remember { mutableStateOf(currentModel) }
     var key by remember { mutableStateOf(currentKey) }
+    var tokens by remember { mutableStateOf(currentTokens.toString()) }
+    var history by remember { mutableStateOf(currentHistory.toString()) }
+    var system by remember { mutableStateOf(currentSystem) }
 
     Scaffold(
         topBar = {
@@ -53,10 +59,33 @@ fun SettingsScreen(store: SettingsDataStore, onBack: () -> Unit) {
                 label = { Text("API Key") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = tokens,
+                onValueChange = { tokens = it },
+                label = { Text("Max Tokens") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = history,
+                onValueChange = { history = it },
+                label = { Text("History Words") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = system,
+                onValueChange = { system = it },
+                label = { Text("System Prompt") },
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(Modifier.height(16.dp))
             Button(onClick = {
                 scope.launch {
-                    store.save(project, model, key)
+                    val t = tokens.toIntOrNull() ?: 256
+                    val h = history.toIntOrNull() ?: 1000
+                    store.save(project, model, key, t, h, system)
                     onBack()
                 }
             }) {
