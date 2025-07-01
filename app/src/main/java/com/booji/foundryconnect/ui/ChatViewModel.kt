@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.booji.foundryconnect.BuildConfig
-import com.booji.foundryconnect.data.network.SemanticKernelService
+import com.booji.foundryconnect.data.network.AzureOpenAiService
 import com.booji.foundryconnect.data.network.Message
 import com.booji.foundryconnect.data.repository.ChatRepository
 import com.booji.foundryconnect.data.history.ChatHistoryStore
@@ -118,7 +118,7 @@ class ChatViewModel(
  * Helper to construct a [ChatRepository] from runtime settings.
  */
 fun createRepository(project: String, model: String, apiKey: String): ChatRepository {
-    val backend = SemanticKernelService(project, model, apiKey)
+    val backend = AzureOpenAiService(project, model, apiKey)
     return ChatRepository(backend)
 }
 

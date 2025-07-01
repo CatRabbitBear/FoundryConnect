@@ -1,6 +1,6 @@
 [versions]
 agp = "8.11.0"
-azureAiOpenai = "1.1.0"
+azureAiOpenai = "1.0.0-beta.16"
 converterGson = "3.0.0"
 dotenvKotlin = "6.5.1"
 kotlin = "2.0.21"
