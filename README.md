@@ -10,6 +10,7 @@ Create an environment file at `app/assets/env` before building the project. The 
 AZURE_PROJECT=<your-project-id>
 AZURE_MODEL=<your-model-name>
 AZURE_API_KEY=<your-api-key>
+BING_API_KEY=<your-bing-search-key>
 ```
 
 These values populate the BuildConfig fields defined in `app/build.gradle.kts`:
@@ -33,7 +34,7 @@ val envMap: Map<String, String> = if (envFile.exists()) {
 }
 ```
 
-The `AZURE_PROJECT`, `AZURE_MODEL`, and `AZURE_API_KEY` fields are later retrieved using `BuildConfig`.
+The `AZURE_PROJECT`, `AZURE_MODEL`, `AZURE_API_KEY`, and `BING_API_KEY` fields are later retrieved using `BuildConfig`.
 
 ## DataStore settings
 

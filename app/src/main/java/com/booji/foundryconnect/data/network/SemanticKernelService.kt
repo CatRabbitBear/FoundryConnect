@@ -4,8 +4,6 @@ import com.azure.ai.openai.OpenAIClientBuilder
 import com.azure.core.credential.AzureKeyCredential
 import com.microsoft.semantickernel.Kernel
 import com.microsoft.semantickernel.plugin.KernelPluginFactory
-import com.microsoft.semantickernel.semanticfunctions.annotations.DefineKernelFunction
-import com.microsoft.semantickernel.semanticfunctions.annotations.KernelFunctionParameter
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService
 import com.microsoft.semantickernel.services.chatcompletion.ChatHistory
 import com.microsoft.semantickernel.services.chatcompletion.message.ChatMessageTextContent
@@ -19,7 +17,7 @@ class SemanticKernelService(
     projectId: String,
     private val model: String,
     apiKey: String,
-    private val serviceId: String = "foundry"
+    private val searchKey: String
 ) : ChatBackend {
 
     private val kernel: Kernel
@@ -41,7 +39,7 @@ class SemanticKernelService(
 
         kernel = Kernel.builder()
             .withAIService(ChatCompletionService::class.java, completion)
-            .withPlugin(KernelPluginFactory.createFromObject(EchoPlugin(), "echo"))
+            .withPlugin(KernelPluginFactory.createFromObject(WebSearchPlugin(searchKey), "web"))
             .build()
 
         chat = kernel.getService(ChatCompletionService::class.java)
@@ -67,18 +65,4 @@ class SemanticKernelService(
                 "Error: ${e.message}"
             }
         }
-
-    private class EchoPlugin {
-        @DefineKernelFunction(
-            name = "echo",
-            description = "Echo the provided text",
-            returnType = "String",
-            returnDescription = "Echo result",
-            samples = []
-        )
-        fun echo(
-            @KernelFunctionParameter(name = "text", description = "Text to echo")
-            text: String
-        ): String = text
-    }
 }
