@@ -137,6 +137,7 @@ dependencies {
     implementation(libs.azure.ai.openai)
     implementation(libs.semantickernel.core)
     implementation(libs.semantickernel.aiservices.openai)
+    implementation(libs.okhttp)
 
 
     testImplementation(libs.mockwebserver.v500alpha14)
