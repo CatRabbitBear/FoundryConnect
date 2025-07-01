@@ -26,7 +26,7 @@ class SemanticKernelService(
     private val chat: ChatCompletionService
 
     init {
-        val endpoint = "https://$projectId.openai.azure.com/"
+        val endpoint = "https://$projectId.cognitiveservices.azure.com/"
         val client = OpenAIClientBuilder()
             .endpoint(endpoint)
             .credential(AzureKeyCredential(apiKey))

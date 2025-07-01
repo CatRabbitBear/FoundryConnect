@@ -79,6 +79,20 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    packaging {
+        resources {
+            // Exclude the INDEX.LIST files coming from Netty
+            excludes += "META-INF/INDEX.LIST"
+            // Exclude the THIRD-PARTY.txt duplicates from Semantic Kernel jars
+            excludes += "THIRD-PARTY.txt"
+            // (Optional) Exclude any other META-INF collisions you run into
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/NOTICE"
+
+            excludes += "META-INF/*.*"
+        }
+    }
 }
 
 dependencies {
@@ -117,6 +131,7 @@ dependencies {
     implementation(libs.markwon.core)
     implementation(libs.semantickernel.core)
     implementation(libs.semantickernel.aiservices.openai)
+
 
     testImplementation(libs.mockwebserver.v500alpha14)
 }

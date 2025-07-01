@@ -4,6 +4,7 @@ import com.booji.foundryconnect.data.network.Message
 import com.booji.foundryconnect.data.repository.ChatRepository
 import com.booji.foundryconnect.data.repository.FakeChatBackend
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -21,11 +22,13 @@ class ChatViewModelTest {
         // Main dispatcher will be provided per-test using the runTest scheduler
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @After
     fun tearDown() {
         Dispatchers.resetMain()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun sendMessage_addsAssistantMessageOnSuccess() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
@@ -40,6 +43,7 @@ class ChatViewModelTest {
         assertNull(vm.errorMessage)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun sendMessage_setsErrorMessageOnFailure() = runTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))

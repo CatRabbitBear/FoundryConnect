@@ -1,5 +1,6 @@
 [versions]
 agp = "8.11.0"
+azureAiOpenai = "1.1.0"
 converterGson = "3.0.0"
 dotenvKotlin = "6.5.1"
 kotlin = "2.0.21"
@@ -19,12 +20,16 @@ kotlinxCoroutinesTest = "1.10.2"
 mockWebServer = "5.0.0-alpha.16"
 datastore = "1.1.0"
 markwon = "4.6.2"
+semanticKernelAiservicesOpenai = "<version>"
+semanticKernelAiservicesOpenaiVersion = "1.4.4-RC1"
 semantickernelCore = "0.2.13-alpha"
 semantickernelAI = "1.4.4-RC1"
 kotlinxCoroutinesJdk8 = "1.10.2"
+semanticKernelCoreVersion = "1.4.4-RC1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+azure-ai-openai = { module = "com.azure:azure-ai-openai", version.ref = "azureAiOpenai" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenvKotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -49,6 +54,9 @@ mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
+semantic-kernel-aiservices-openai = { module = "com.microsoft.semantickernel:semantic-kernel-aiservices-openai", version.ref = "semanticKernelAiservicesOpenai" }
+semantic-kernel-aiservices-openai-v144rc1 = { module = "com.microsoft.semantickernel:semantic-kernel-aiservices-openai", version.ref = "semanticKernelAiservicesOpenaiVersion" }
+semantic-kernel-core = { module = "com.microsoft.semantickernel:semantic-kernel-core", version.ref = "semanticKernelCoreVersion" }
 semantickernel-core = { group = "com.microsoft.semantic-kernel", name = "semantickernel-core", version.ref = "semantickernelCore" }
 semantickernel-aiservices-openai = { group = "com.microsoft.semantic-kernel", name = "semantickernel-aiservices-openai", version.ref = "semantickernelAI" }
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinxCoroutinesJdk8" }
