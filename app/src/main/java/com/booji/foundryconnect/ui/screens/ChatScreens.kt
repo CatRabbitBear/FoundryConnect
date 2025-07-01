@@ -24,7 +24,8 @@ import com.booji.foundryconnect.ui.components.MessageBubble
 @Composable
 fun ChatScreen(
     viewModel: ChatViewModel = remember { ChatViewModel() },
-    onOpenSettings: () -> Unit = {}
+    onOpenSettings: () -> Unit = {},
+    onOpenChats: () -> Unit = {}
 ) {
     val error = viewModel.errorMessage
     val loading = viewModel.isLoading
@@ -42,6 +43,7 @@ fun ChatScreen(
             TopAppBar(
                 title = { Text("Foundry Chat") },
                 actions = {
+                    TextButton(onClick = onOpenChats) { Text("Chats") }
                     TextButton(onClick = onOpenSettings) { Text("Settings") }
                 }
             )
@@ -119,7 +121,7 @@ private fun MessageInput(
 @Composable
 private fun EmptyChatPreview() {
     val vm = remember { ChatViewModel() }
-    ChatScreen(viewModel = vm)
+    ChatScreen(viewModel = vm, onOpenChats = {})
 }
 
 @Preview(showBackground = true)
@@ -131,7 +133,7 @@ private fun FilledChatPreview() {
             messages += Message("assistant", "Hi there!")
         }
     }
-    ChatScreen(viewModel = vm)
+    ChatScreen(viewModel = vm, onOpenChats = {})
 }
 
 @Preview(showBackground = true)
@@ -142,7 +144,7 @@ private fun LoadingPreview() {
             isLoading = true
         }
     }
-    ChatScreen(viewModel = vm)
+    ChatScreen(viewModel = vm, onOpenChats = {})
 }
 
 @Preview(showBackground = true)
@@ -153,5 +155,5 @@ private fun ErrorPreview() {
             errorMessage = "Something went wrong"
         }
     }
-    ChatScreen(viewModel = vm)
+    ChatScreen(viewModel = vm, onOpenChats = {})
 }

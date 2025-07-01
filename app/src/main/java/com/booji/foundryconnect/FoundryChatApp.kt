@@ -3,6 +3,7 @@ package com.booji.foundryconnect
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.booji.foundryconnect.data.history.ChatHistoryStore
+import com.booji.foundryconnect.data.history.ChatRecord
 import com.booji.foundryconnect.data.prefs.SettingsDataStore
 import com.booji.foundryconnect.ui.ChatViewModel
 import com.booji.foundryconnect.ui.createRepository
@@ -34,15 +35,24 @@ fun FoundryChatApp() {
     }
     val viewModel = remember(repository, chatStore, store) { ChatViewModel(repository, chatStore, store) }
 
-    val chats by chatStore.chats.collectAsState(initial = emptyList())
+    val chats: List<ChatRecord>? by chatStore.chats.collectAsState(initial = null)
     var screen by remember { mutableStateOf<Screen?>(null) }
-    if (screen == null) {
-        screen = if (chats.isEmpty()) Screen.Chat else Screen.List
+    LaunchedEffect(chats) {
+        if (screen == null && chats != null) {
+            screen = if (chats!!.isEmpty()) Screen.Chat else Screen.List
+        }
     }
 
     val current = screen
     when (current) {
-        Screen.Chat -> ChatScreen(viewModel, onOpenSettings = { screen = Screen.Settings })
+        Screen.Chat -> ChatScreen(
+            viewModel,
+            onOpenSettings = { screen = Screen.Settings },
+            onOpenChats = {
+                viewModel.persistChatIfNeeded()
+                screen = Screen.List
+            }
+        )
         Screen.Settings -> SettingsScreen(store) { screen = Screen.Chat }
         Screen.List -> ChatListScreen(
             store = chatStore,

@@ -46,7 +46,7 @@ fun ChatListScreen(
                 Text("Start New Chat")
             }
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(chats) { chat ->
+                items(chats.asReversed()) { chat ->
                     ChatRow(
                         chat = chat,
                         onOpen = { onOpenChat(chat) },
