@@ -35,9 +35,8 @@ class SemanticKernelService(
         // Use the OpenAI chat completion service configured for Azure endpoint
         val completion = com.microsoft.semantickernel.aiservices.openai.chatcompletion.OpenAIChatCompletion
             .builder()
+            .withModelId(model)
             .withOpenAIAsyncClient(client)
-            .withDeploymentName(model)
-            .withServiceId(serviceId)
             .build()
 
         kernel = Kernel.builder()
@@ -58,11 +57,11 @@ class SemanticKernelService(
                         "system" -> ChatMessageTextContent.systemMessage(msg.content)
                         else -> ChatMessageTextContent.userMessage(msg.content)
                     }
-                    history.addAll(ChatHistory(listOf(content)))
+                    history.addMessage(content)
                 }
 
                 val result = chat.getChatMessageContentsAsync(history, kernel, null).block()
-                val first = result.firstOrNull() as? ChatMessageTextContent
+                val first = result?.firstOrNull() as? ChatMessageTextContent
                 first?.content ?: "No response from Foundry"
             } catch (e: Exception) {
                 "Error: ${e.message}"

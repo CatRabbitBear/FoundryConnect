@@ -2,10 +2,12 @@ package com.booji.foundryconnect.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.booji.foundryconnect.data.history.ChatHistoryStore
 import com.booji.foundryconnect.data.history.ChatRecord
@@ -59,16 +63,39 @@ fun ChatListScreen(
 }
 
 @Composable
-private fun ChatRow(chat: ChatRecord, onOpen: () -> Unit, onDelete: () -> Unit) {
+private fun ChatRow(
+    chat: ChatRecord,
+    onOpen: () -> Unit,
+    onDelete: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        val preview = chat.messages.firstOrNull()?.content?.take(40) ?: "(empty)"
-        Button(onClick = onOpen) { Text(preview) }
+        val preview = chat.messages.firstOrNull()?.content ?: "(empty)"
+
+        // 1) Preview button takes remaining space
+        Button(
+            onClick = onOpen,
+            modifier = Modifier
+                .weight(1f)                     // <-- take all leftover width
+                .height(IntrinsicSize.Min)      // keep a nice height
+        ) {
+            Text(
+                text = preview,
+                maxLines = 1,                  // <-- single line
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         Spacer(Modifier.width(8.dp))
-        Button(onClick = onDelete) { Text("Delete") }
+
+        // 2) Delete button only as wide as its text
+        Button(onClick = onDelete) {
+            Text("Delete")
+        }
     }
 }

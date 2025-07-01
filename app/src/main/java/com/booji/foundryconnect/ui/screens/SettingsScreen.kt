@@ -92,9 +92,27 @@ fun SettingsScreen(store: SettingsDataStore, onBack: () -> Unit) {
             Spacer(Modifier.height(16.dp))
             Button(onClick = {
                 scope.launch {
-                    val t = tokens.toIntOrNull() ?: 256
-                    val h = history.toIntOrNull() ?: 1000
-                    store.save(project, model, key, t, h, system, service)
+                    // Parse ints, falling back if the user left it blank or non-numeric
+                    val t = tokens.toIntOrNull() ?: currentTokens
+                    val h = history.toIntOrNull() ?: currentHistory
+
+                    // Use the new text if non-blank, otherwise keep the previous value
+                    val newProject = project.ifBlank { currentProject }
+                    val newModel   = model.ifBlank   { currentModel   }
+                    val newKey     = key.ifBlank     { currentKey     }
+                    val newSystem  = system.ifBlank  { currentSystem  }
+                    val newService = service.ifBlank { currentService }
+
+                    store.save(
+                        newProject,
+                        newModel,
+                        newKey,
+                        t,
+                        h,
+                        newSystem,
+                        newService
+                    )
+
                     onBack()
                 }
             }) {
