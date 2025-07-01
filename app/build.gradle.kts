@@ -113,6 +113,7 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.markwon.core)
 
     testImplementation(libs.mockwebserver.v500alpha14)
 }
