@@ -56,8 +56,13 @@ class ChatViewModel(
         messages.clear()
         inputText = ""
         errorMessage = null
+    }
+
+    /** Ensure the current chat is stored if it has content. */
+    fun persistChatIfNeeded() {
+        if (messages.isEmpty()) return
         viewModelScope.launch {
-            historyStore?.saveChat(ChatRecord(currentChatId, emptyList()))
+            historyStore?.saveChat(ChatRecord(currentChatId, messages.toList()))
         }
     }
 
