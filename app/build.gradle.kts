@@ -129,6 +129,7 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.markwon.core)
+    implementation(libs.azure.ai.openai)
     implementation(libs.semantickernel.core)
     implementation(libs.semantickernel.aiservices.openai)
 

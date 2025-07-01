@@ -2,8 +2,6 @@ package com.booji.foundryconnect.data.repository
 
 import com.booji.foundryconnect.data.network.ChatBackend
 import com.booji.foundryconnect.data.network.Message
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 
 /**
@@ -15,8 +13,8 @@ import kotlinx.coroutines.withContext
 class ChatRepository(
     private val backend: ChatBackend
 ) {
-    suspend fun sendMessage(messages: List<Message>, maxTokens: Int): String = withContext(Dispatchers.IO) {
-        backend.sendMessage(messages, maxTokens)
+    suspend fun sendMessage(messages: List<Message>, maxTokens: Int): String {
+        return backend.sendMessage(messages, maxTokens)
     }
 
 }
