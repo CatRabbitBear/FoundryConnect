@@ -107,6 +107,7 @@ dependencies {
 
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.jdk8)
 
     // Networking (Retrofit and OkHttp)
     implementation(libs.retrofit)
@@ -114,6 +115,8 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.markwon.core)
+    implementation(libs.semantickernel.core)
+    implementation(libs.semantickernel.aiservices.openai)
 
     testImplementation(libs.mockwebserver.v500alpha14)
 }

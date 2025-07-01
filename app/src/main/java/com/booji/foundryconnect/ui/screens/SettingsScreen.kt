@@ -20,6 +20,7 @@ fun SettingsScreen(store: SettingsDataStore, onBack: () -> Unit) {
     val currentTokens by store.maxTokens.collectAsState(initial = 256)
     val currentHistory by store.historyWords.collectAsState(initial = 1000)
     val currentSystem by store.systemMessage.collectAsState(initial = "")
+    val currentService by store.serviceId.collectAsState(initial = "")
 
     var project by remember { mutableStateOf(currentProject) }
     var model by remember { mutableStateOf(currentModel) }
@@ -27,6 +28,7 @@ fun SettingsScreen(store: SettingsDataStore, onBack: () -> Unit) {
     var tokens by remember { mutableStateOf(currentTokens.toString()) }
     var history by remember { mutableStateOf(currentHistory.toString()) }
     var system by remember { mutableStateOf(currentSystem) }
+    var service by remember { mutableStateOf(currentService) }
 
     Scaffold(
         topBar = {
@@ -80,12 +82,19 @@ fun SettingsScreen(store: SettingsDataStore, onBack: () -> Unit) {
                 label = { Text("System Prompt") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = service,
+                onValueChange = { service = it },
+                label = { Text("Service ID") },
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(Modifier.height(16.dp))
             Button(onClick = {
                 scope.launch {
                     val t = tokens.toIntOrNull() ?: 256
                     val h = history.toIntOrNull() ?: 1000
-                    store.save(project, model, key, t, h, system)
+                    store.save(project, model, key, t, h, system, service)
                     onBack()
                 }
             }) {

@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.booji.foundryconnect.BuildConfig
-import com.booji.foundryconnect.data.network.FoundryApiService
+import com.booji.foundryconnect.data.network.SemanticKernelService
 import com.booji.foundryconnect.data.network.Message
 import com.booji.foundryconnect.data.repository.ChatRepository
 import com.booji.foundryconnect.data.history.ChatHistoryStore
@@ -16,10 +16,6 @@ import com.booji.foundryconnect.data.history.HistoryReducer
 import com.booji.foundryconnect.data.prefs.SettingsDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.UUID
 
 /**
@@ -122,29 +118,7 @@ class ChatViewModel(
  * Helper to construct a [ChatRepository] from runtime settings.
  */
 fun createRepository(project: String, model: String, apiKey: String): ChatRepository {
-    val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-    val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer $apiKey")
-                .build()
-            chain.proceed(request)
-        }
-        .build()
-
-    val base = "https://${project}.cognitiveservices.azure.com/" +
-            "openai/deployments/${model}/"
-
-    val retrofit = Retrofit.Builder()
-        .baseUrl(base)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val service = retrofit.create(FoundryApiService::class.java)
-    return ChatRepository(service)
+    val backend = SemanticKernelService(project, model, apiKey)
+    return ChatRepository(backend)
 }
 
