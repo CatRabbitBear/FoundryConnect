@@ -53,6 +53,11 @@ android {
             "AZURE_API_KEY",
             "\"${envMap["AZURE_API_KEY"] ?: ""}\""
         )
+        buildConfigField(
+            "String",
+            "BING_API_KEY",
+            "\"${envMap["BING_API_KEY"] ?: ""}\""
+        )
     }
 
     buildTypes {
