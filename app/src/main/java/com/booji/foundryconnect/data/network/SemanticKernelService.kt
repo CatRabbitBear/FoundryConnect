@@ -3,6 +3,8 @@ package com.booji.foundryconnect.data.network
 import com.azure.ai.openai.OpenAIClientBuilder
 import com.azure.core.credential.AzureKeyCredential
 import com.microsoft.semantickernel.Kernel
+import com.microsoft.semantickernel.orchestration.InvocationContext
+import com.microsoft.semantickernel.orchestration.ToolCallBehavior
 import com.microsoft.semantickernel.plugin.KernelPluginFactory
 import com.microsoft.semantickernel.services.chatcompletion.ChatCompletionService
 import com.microsoft.semantickernel.services.chatcompletion.ChatHistory
@@ -59,8 +61,18 @@ class SemanticKernelService(
                     history.addMessage(content)
                 }
 
-                val result = chat.getChatMessageContentsAsync(history, kernel, null).block()
-                val first = result?.firstOrNull() as? ChatMessageTextContent
+                // Instead of passing `null` here…
+                val invocationContext = InvocationContext.builder()
+                    // include all kernel functions and let the model auto‐invoke them
+                    .withToolCallBehavior(ToolCallBehavior.allowAllKernelFunctions(true))
+                    .build()
+
+                val result = chat.getChatMessageContentsAsync(history, kernel, invocationContext).block()
+                // DEBUG: print out what kind of messages came back
+                result?.forEach { c ->
+                    println("→ Response chunk: [${c::class.simpleName}] $c")
+                }
+                val first = result?.lastOrNull() // as? ChatMessageTextContent
                 first?.content ?: "No response from Foundry"
             } catch (e: Exception) {
                 "Error: ${e.message}"

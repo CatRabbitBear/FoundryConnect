@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import org.json.JSONArray
 
 /**
  * Utility for talking to the Firecrawl scraping API.
@@ -28,8 +29,11 @@ class FirecrawlClient(
         // Build the POST body
         val bodyJson = JSONObject().apply {
             put("url", url)
-            put("formats", listOf("markdown"))
+            put("onlyMainContent", true)
+            put("formats", JSONArray().put("markdown"))
         }.toString()
+
+        println("▶️ Firecrawl request JSON: $bodyJson")
 
         val request = Request.Builder()
             .url("https://api.firecrawl.dev/v1/scrape")
@@ -39,7 +43,11 @@ class FirecrawlClient(
             .build()
 
         client.newCall(request).execute().use { resp ->
+            val respText = resp.body?.string().orEmpty()
+            println("◀️ Firecrawl response [${resp.code}]: $respText")
+
             if (!resp.isSuccessful) {
+                println("⚠️ Firecrawl failed [${resp.code}] for $url → $resp")
                 throw RuntimeException("Firecrawl HTTP error: ${resp.code}")
             }
             val text = resp.body.string().orEmpty()

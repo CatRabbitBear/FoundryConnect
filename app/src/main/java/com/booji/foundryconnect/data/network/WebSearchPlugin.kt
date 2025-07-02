@@ -47,6 +47,7 @@ class WebSearchPlugin(private val apiKey: String, private val firecrawlApiKey: S
                     if (link.isNullOrBlank()) continue
 
                     val markdown = try {
+                        println("Attempting to crawl $link")
                         firecrawl.fetchMarkdown(link)
                     } catch (e: Exception) {
                         "Error fetching markdown: ${e.message}"

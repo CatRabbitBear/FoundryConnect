@@ -10,7 +10,8 @@ Create an environment file at `app/assets/env` before building the project. The 
 AZURE_PROJECT=<your-project-id>
 AZURE_MODEL=<your-model-name>
 AZURE_API_KEY=<your-api-key>
-BING_API_KEY=<your-bing-search-key>
+SERP_API_KEY=<your-serpapi-search-key>
+FIRECRAWL_API_KEY=<your-firecrawl-api-key>
 ```
 
 These values populate the BuildConfig fields defined in `app/build.gradle.kts`:

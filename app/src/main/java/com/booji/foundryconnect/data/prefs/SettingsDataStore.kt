@@ -29,10 +29,10 @@ class SettingsDataStore(private val context: Context) {
     val apiKey: Flow<String> = context.settingsDataStore.data.map { it[KEY_KEY] ?: "" }
 
     /** Flow of the configured max tokens for API requests. */
-    val maxTokens: Flow<Int> = context.settingsDataStore.data.map { it[KEY_MAX_TOKENS] ?: 256 }
+    val maxTokens: Flow<Int> = context.settingsDataStore.data.map { it[KEY_MAX_TOKENS] ?: 600 }
 
     /** Flow of the history word limit used when sending requests. */
-    val historyWords: Flow<Int> = context.settingsDataStore.data.map { it[KEY_HISTORY_WORDS] ?: 1000 }
+    val historyWords: Flow<Int> = context.settingsDataStore.data.map { it[KEY_HISTORY_WORDS] ?: 3000 }
 
     /** Flow of the optional system prompt. */
     val systemMessage: Flow<String> = context.settingsDataStore.data.map { it[KEY_SYSTEM_MESSAGE] ?: "" }
