@@ -22,14 +22,17 @@ class SettingsDataStore(private val context: Context) {
     /** Flow of the stored model name. */
     val modelName: Flow<String> = context.settingsDataStore.data.map { it[KEY_MODEL] ?: "" }
 
+    /** Flow of the stored service id. */
+    val serviceId: Flow<String> = context.settingsDataStore.data.map { it[KEY_SERVICE_ID] ?: "" }
+
     /** Flow of the stored API key. */
     val apiKey: Flow<String> = context.settingsDataStore.data.map { it[KEY_KEY] ?: "" }
 
     /** Flow of the configured max tokens for API requests. */
-    val maxTokens: Flow<Int> = context.settingsDataStore.data.map { it[KEY_MAX_TOKENS] ?: 256 }
+    val maxTokens: Flow<Int> = context.settingsDataStore.data.map { it[KEY_MAX_TOKENS] ?: 600 }
 
     /** Flow of the history word limit used when sending requests. */
-    val historyWords: Flow<Int> = context.settingsDataStore.data.map { it[KEY_HISTORY_WORDS] ?: 1000 }
+    val historyWords: Flow<Int> = context.settingsDataStore.data.map { it[KEY_HISTORY_WORDS] ?: 3000 }
 
     /** Flow of the optional system prompt. */
     val systemMessage: Flow<String> = context.settingsDataStore.data.map { it[KEY_SYSTEM_MESSAGE] ?: "" }
@@ -41,7 +44,8 @@ class SettingsDataStore(private val context: Context) {
         key: String,
         maxTokens: Int,
         historyWords: Int,
-        systemMessage: String
+        systemMessage: String,
+        serviceId: String
     ) {
         context.settingsDataStore.edit { prefs ->
             prefs[KEY_PROJECT] = project
@@ -50,6 +54,7 @@ class SettingsDataStore(private val context: Context) {
             prefs[KEY_MAX_TOKENS] = maxTokens
             prefs[KEY_HISTORY_WORDS] = historyWords
             prefs[KEY_SYSTEM_MESSAGE] = systemMessage
+            prefs[KEY_SERVICE_ID] = serviceId
         }
     }
 
@@ -60,5 +65,6 @@ class SettingsDataStore(private val context: Context) {
         val KEY_MAX_TOKENS = intPreferencesKey("max_tokens")
         val KEY_HISTORY_WORDS = intPreferencesKey("history_words")
         val KEY_SYSTEM_MESSAGE = stringPreferencesKey("system_message")
+        val KEY_SERVICE_ID = stringPreferencesKey("service_id")
     }
 }

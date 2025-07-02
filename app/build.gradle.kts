@@ -53,6 +53,16 @@ android {
             "AZURE_API_KEY",
             "\"${envMap["AZURE_API_KEY"] ?: ""}\""
         )
+        buildConfigField(
+            "String",
+            "SERP_API_KEY",
+            "\"${envMap["SERP_API_KEY"] ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "FIRECRAWL_API_KEY",
+            "\"${envMap["FIRECRAWL_API_KEY"] ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -78,6 +88,20 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+    }
+
+    packaging {
+        resources {
+            // Exclude the INDEX.LIST files coming from Netty
+            excludes += "META-INF/INDEX.LIST"
+            // Exclude the THIRD-PARTY.txt duplicates from Semantic Kernel jars
+            excludes += "THIRD-PARTY.txt"
+            // (Optional) Exclude any other META-INF collisions you run into
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/NOTICE"
+
+            excludes += "META-INF/*.*"
+        }
     }
 }
 
@@ -107,6 +131,7 @@ dependencies {
 
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.jdk8)
 
     // Networking (Retrofit and OkHttp)
     implementation(libs.retrofit)
@@ -114,6 +139,11 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.markwon.core)
+    implementation(libs.azure.ai.openai)
+    implementation(libs.semantickernel.core)
+    implementation(libs.semantickernel.aiservices.openai)
+    implementation(libs.okhttp)
+
 
     testImplementation(libs.mockwebserver.v500alpha14)
 }

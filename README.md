@@ -1,39 +1,24 @@
 # FoundryConnect
 
-FoundryConnect is a minimal Android chat app that talks to **Azure Foundry**. It stores your Azure credentials locally via Android's DataStore and sends chat prompts to the Foundry REST API.
+FoundryConnect is a small prototype Android chat client for **Azure Foundry**. It was built as a learning exercise and is not meant for day‑to‑day use. The code is unlikely to be maintained going forward.
 
-## Configuration
+## Setup
 
-Create an environment file at `app/assets/env` before building the project. The Gradle script reads this file and exposes each value as a `BuildConfig` field:
+Create a folder named `assets` inside the `app` module and then create a file called `env` within it (do **not** prefix the file name with a dot). Android Studio may only show this directory in **Project** view.
+
+Populate `app/assets/env` with your credentials:
 
 ```env
-AZURE_PROJECT=<your-project-id>
+AZURE_PROJECT=<your-foundry-project-id>
 AZURE_MODEL=<your-model-name>
 AZURE_API_KEY=<your-api-key>
+SERP_API_KEY=<your-serpapi-key>
+FIRECRAWL_API_KEY=<your-firecrawl-key>
 ```
 
-These values populate the BuildConfig fields defined in `app/build.gradle.kts`:
+The app requires an Azure Foundry endpoint, model and API key to send prompts. Web search happens in two steps: a SERPAPI query returns search results and Firecrawl then fetches markdown for a subset of those URLs. Both services offer free tiers.
 
-```kotlin
-val envFile = rootProject.file("app/assets/env")
-val envMap: Map<String, String> = if (envFile.exists()) {
-    envFile.readLines()
-        .mapNotNull { line ->
-            val trimmed = line.trim()
-            if (trimmed.isEmpty() || trimmed.startsWith("#") || !trimmed.contains("=")) {
-                null
-            } else {
-                val (key, value) = trimmed.split("=", limit = 2)
-                key.trim() to value.trim().trim('"', '\'')
-            }
-        }
-        .toMap()
-} else {
-    emptyMap()
-}
-```
-
-The `AZURE_PROJECT`, `AZURE_MODEL`, and `AZURE_API_KEY` fields are later retrieved using `BuildConfig`.
+Gradle reads this file and exposes each entry as a `BuildConfig` field so the app can access the values at runtime.
 
 ## DataStore settings
 
