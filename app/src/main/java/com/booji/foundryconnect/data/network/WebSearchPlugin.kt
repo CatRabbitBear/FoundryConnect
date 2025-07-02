@@ -8,8 +8,10 @@ import okhttp3.Request
 import org.json.JSONObject
 import java.net.URLEncoder
 
-class SerpApiPlugin(private val apiKey: String) {
+class WebSearchPlugin(private val apiKey: String, private val firecrawlApiKey: String) {
     private val client = OkHttpClient()
+    private val firecrawl = FirecrawlClient(client, firecrawlApiKey)
+    private val topNResults = 2
 
     @DefineKernelFunction(
         name = "search_web",
@@ -30,7 +32,11 @@ class SerpApiPlugin(private val apiKey: String) {
         client.newCall(req).execute().use { resp ->
             if (!resp.isSuccessful) throw RuntimeException("SerpApi failed: ${resp.code}")
             val json = resp.body.string().orEmpty()
-            // Optionally parse and summarize title/snippet of top 3 results
+            // Retrieve the topNResults from "organic_results"
+            // Iterate over the organic results and call firecrawl.fetchMarkdown on "link" in each organic result object
+            // collate the results into a json string (ready to send back to LLM).
+            // Note: Perhaps maintain the url in the return JSON objects so the downstream AI can
+            // judge the source and pass this on to the user.
             return json
         }
     }

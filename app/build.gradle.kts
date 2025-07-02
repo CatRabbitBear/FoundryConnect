@@ -55,8 +55,13 @@ android {
         )
         buildConfigField(
             "String",
-            "BING_API_KEY",
-            "\"${envMap["BING_API_KEY"] ?: ""}\""
+            "SERP_API_KEY",
+            "\"${envMap["SERP_API_KEY"] ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "FIRECRAWL_API_KEY",
+            "\"${envMap["FIRECRAWL_API_KEY"] ?: ""}\""
         )
     }
 

@@ -110,7 +110,8 @@ class ChatViewModel(
             BuildConfig.AZURE_PROJECT,
             BuildConfig.AZURE_MODEL,
             BuildConfig.AZURE_API_KEY,
-            BuildConfig.BING_API_KEY
+            BuildConfig.SERP_API_KEY,
+            BuildConfig.FIRECRAWL_API_KEY
         )
     }
 }
@@ -118,8 +119,14 @@ class ChatViewModel(
 /**
  * Helper to construct a [ChatRepository] from runtime settings.
  */
-fun createRepository(project: String, model: String, apiKey: String, searchKey: String): ChatRepository {
-    val backend = SemanticKernelService(project, model, apiKey, searchKey)
+fun createRepository(
+    project: String,
+    model: String,
+    apiKey: String,
+    searchKey: String,
+    firecrawlApiKey: String
+): ChatRepository {
+    val backend = SemanticKernelService(project, model, apiKey, searchKey, firecrawlApiKey)
     return ChatRepository(backend)
 }
 

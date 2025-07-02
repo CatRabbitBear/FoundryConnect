@@ -31,7 +31,8 @@ fun FoundryChatApp() {
             project.ifBlank { BuildConfig.AZURE_PROJECT },
             model.ifBlank { BuildConfig.AZURE_MODEL },
             key.ifBlank { BuildConfig.AZURE_API_KEY },
-            BuildConfig.BING_API_KEY
+            BuildConfig.SERP_API_KEY,
+            BuildConfig.FIRECRAWL_API_KEY
         )
     }
     val viewModel = remember(repository, chatStore, store) { ChatViewModel(repository, chatStore, store) }

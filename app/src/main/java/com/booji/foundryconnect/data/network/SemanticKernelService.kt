@@ -17,7 +17,8 @@ class SemanticKernelService(
     projectId: String,
     private val model: String,
     apiKey: String,
-    private val searchKey: String
+    private val searchKey: String,
+    firecrawlKey: String
 ) : ChatBackend {
 
     private val kernel: Kernel
@@ -39,7 +40,7 @@ class SemanticKernelService(
 
         kernel = Kernel.builder()
             .withAIService(ChatCompletionService::class.java, completion)
-            .withPlugin(KernelPluginFactory.createFromObject(WebSearchPlugin(searchKey), "web"))
+            .withPlugin(KernelPluginFactory.createFromObject(WebSearchPlugin(searchKey, firecrawlKey), "web"))
             .build()
 
         chat = kernel.getService(ChatCompletionService::class.java)
