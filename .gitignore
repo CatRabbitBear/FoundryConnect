@@ -17,3 +17,4 @@ android-commandlinetools.zip
 env
 .env
 assets/env
+.kotlin/
