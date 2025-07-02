@@ -6,7 +6,6 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import java.net.URLEncoder
 
 class WebSearchPlugin(private val apiKey: String, private val firecrawlApiKey: String) {
     private val client = OkHttpClient()
@@ -19,25 +18,57 @@ class WebSearchPlugin(private val apiKey: String, private val firecrawlApiKey: S
         returnType = "String",
         returnDescription = "Search summary"
     )
-    fun search(@KernelFunctionParameter(name="query") query: String): String {
-        val url = HttpUrl.Builder()
-            .scheme("https")
-            .host("serpapi.com")
-            .addPathSegment("search.json")
-            .addQueryParameter("q", query)
-            .addQueryParameter("api_key", apiKey)
-            .build()
+    fun search(@KernelFunctionParameter(name = "query") query: String): String {
+        return try {
+            // Build request to SerpApi
+            val url = HttpUrl.Builder()
+                .scheme("https")
+                .host("serpapi.com")
+                .addPathSegment("search.json")
+                .addQueryParameter("q", query)
+                .addQueryParameter("api_key", apiKey)
+                .build()
 
-        val req = Request.Builder().url(url).build()
-        client.newCall(req).execute().use { resp ->
-            if (!resp.isSuccessful) throw RuntimeException("SerpApi failed: ${resp.code}")
-            val json = resp.body.string().orEmpty()
-            // Retrieve the topNResults from "organic_results"
-            // Iterate over the organic results and call firecrawl.fetchMarkdown on "link" in each organic result object
-            // collate the results into a json string (ready to send back to LLM).
-            // Note: Perhaps maintain the url in the return JSON objects so the downstream AI can
-            // judge the source and pass this on to the user.
-            return json
+            val req = Request.Builder().url(url).build()
+            client.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) {
+                    throw RuntimeException("SerpApi failed: ${resp.code}")
+                }
+
+                val text = resp.body.string().orEmpty()
+                val root = JSONObject(text)
+                val organic = root.optJSONArray("organic_results") ?: return "No results found"
+
+                val results = org.json.JSONArray()
+                val limit = minOf(topNResults, organic.length())
+                for (i in 0 until limit) {
+                    val item = organic.getJSONObject(i)
+                    val link = item.optString("link")
+                    if (link.isNullOrBlank()) continue
+
+                    val markdown = try {
+                        firecrawl.fetchMarkdown(link)
+                    } catch (e: Exception) {
+                        "Error fetching markdown: ${e.message}"
+                    }
+
+                    val entry = JSONObject().apply {
+                        put("position", item.optInt("position", i + 1))
+                        put("title", item.optString("title"))
+                        put("url", link)
+                        put("snippet", item.optString("snippet"))
+                        put("markdown", markdown)
+                    }
+                    results.put(entry)
+                }
+
+                return JSONObject().apply {
+                    put("results", results)
+                }.toString()
+            }
+        } catch (e: Exception) {
+            // Return the error to the caller so the LLM can continue operating
+            "Error: ${e.message}"
         }
     }
 }
