@@ -49,12 +49,25 @@ fun ChatScreen(
             )
         },
         bottomBar = {
-            MessageInput(
-                text = viewModel.inputText,
-                onTextChange = { viewModel.inputText = it },
-                onSend = { viewModel.sendMessage(it) },
-                enabled = !loading
-            )
+            // Place the message input above the navigation bar and keyboard
+            // so it remains accessible when these system UI elements are shown
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(
+                        WindowInsets
+                            .navigationBars
+                            .union(WindowInsets.ime)
+                    )
+            ) {
+                MessageInput(
+                    text = viewModel.inputText,
+                    onTextChange = { viewModel.inputText = it },
+                    onSend = { viewModel.sendMessage(it) },
+                    enabled = !loading,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     ) { inner ->
         Box(modifier = Modifier.padding(inner).fillMaxSize()) {
@@ -93,11 +106,12 @@ private fun MessageInput(
     text: String,
     onTextChange: (String) -> Unit,
     onSend: (String) -> Unit,
-    enabled: Boolean
+    enabled: Boolean,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
